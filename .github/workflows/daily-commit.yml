@@ -1,0 +1,23 @@
+name: Daily Commit
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight UTC
+  workflow_dispatch:
+
+jobs:
+  make-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Update activity file
+        run: |
+          echo "Last activity: $(date)" > activity.txt
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add activity.txt
+          git commit -m "Automated daily activity" || echo "No changes to commit"
+          git push
